@@ -5,7 +5,7 @@ import {
 
 export function FolderRow(props: {
     f: Folder
-    handleFolderClick: (folderName: string) => void
+    handleFolderClick: (folderName: number) => void
   }) {
     const folder = props.f
     return (
