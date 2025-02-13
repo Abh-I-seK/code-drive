@@ -1,5 +1,3 @@
-"use client"
-import { useMemo, useState } from "react"
 import {
   Upload,
   ChevronRight,
@@ -9,45 +7,17 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { FileRow } from "./file-row"
 import { FolderRow } from "./folder-row"
 import { Folder as FolderType, File as FileType } from "@/lib/mock-data"
+import Link from "next/link"
 
 
 export default function GoogleDriveClone(
   props: {
     files: FileType[];
     folders: FolderType[];
+    parents : FolderType[];
   }
   ) {
-  const mockFiles = props.files
-  const mockFolders = props.folders
-  const [currentFolder, setCurrentFolder] = useState<Number>(0)
-
-  const getCurrentFiles = () => {
-    return mockFiles.filter((file) => file.parent === currentFolder)
-  }
-
-  const getCurrentFolders = () => {
-    return mockFolders.filter((folder) => folder.parent === currentFolder)
-  }
-
-  const handleFolderClick = (folderName: number) => {
-    setCurrentFolder(folderName)
-  }
-
-  const breadcrumbs = useMemo(() => {
-    const breadcrumbs = []
-    let currentId : Number | null = currentFolder ?? null
-
-    while (currentId !== null) {
-      const folder = mockFolders.find((Folder) => Folder.id === currentId)
-      if (folder) {
-        breadcrumbs.unshift(folder)
-        currentId = folder.parent
-      } else {
-        break
-      }
-    }
-    return breadcrumbs
-  },[currentFolder])
+  const breadcrumbs = props.parents ?? [];
 
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
@@ -58,33 +28,35 @@ export default function GoogleDriveClone(
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
-            <Button
-              onClick={() => setCurrentFolder(0)}
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground mr-2"
+            <Link
+              href={`/f/${0}`}
             >
-              My Drive
-            </Button>
+            <Button variant={"ghost"} className="text-muted-foreground hover:text-foreground mr-2"> My Drive</Button>
+            </Link>
             {breadcrumbs.map((folder, index) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight
                   className="mx-2 text-muted-foreground"
                   size={16}
                 />
+                <Link href={`/f/${folder.id}`}>
                 <Button
-                  onClick={() => handleFolderClick(folder.id)}
                   variant="ghost"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   {folder.name}
                 </Button>
+                </Link>
               </div>
             ))}
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <Button
-              onClick={handleUpload}
+              // Figure it out how to make this a server component as no client side activity
+              // required here
+              
+              // onClick={handleUpload}
               className="bg-blue-600 text-white hover:bg-blue-700"
             >
               <Upload className="mr-2" size={20} />
@@ -102,16 +74,16 @@ export default function GoogleDriveClone(
           </div>
           <ul>
             {
-              getCurrentFolders().map((folder) => (
+              props.folders.map((folder) => (
                 <li
                   key={folder.id}
                   className="px-6 py-4 border-b border-border hover:bg-muted/50"
                 >
-                  <FolderRow f={folder} handleFolderClick={handleFolderClick} />
+                  <FolderRow f={folder} />
                 </li>
               ))
             }
-            {getCurrentFiles().map((file) => (
+            {props.files.map((file) => (
               <li
                 key={file.id}
                 className="px-6 py-4 border-b border-border hover:bg-muted/50"
