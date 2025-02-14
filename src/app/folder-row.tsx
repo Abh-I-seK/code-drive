@@ -1,11 +1,11 @@
 import Link from "next/link"
-import type { Folder } from "../lib/mock-data"
+import { folder_type } from "@/db/schema"
 import {
   Folder as FolderIcon,
 } from "lucide-react"
 
 export function FolderRow(props: {
-    f: Folder
+    f: folder_type  
   }) {
     const folder = props.f
     return (

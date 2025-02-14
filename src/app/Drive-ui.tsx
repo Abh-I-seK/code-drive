@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { FileRow } from "./file-row"
 import { FolderRow } from "./folder-row"
-import { Folder as FolderType, File as FileType } from "@/lib/mock-data"
+import { folder_type as FolderType, file_type as FileType } from "@/db/schema"
 import Link from "next/link"
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 
 export default function GoogleDriveClone(props: {
   files: FileType[]
@@ -50,7 +51,7 @@ export default function GoogleDriveClone(props: {
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Button
+            {/* <Button
               // Figure it out how to make this a server component as no client side activity
               // required here
 
@@ -59,7 +60,14 @@ export default function GoogleDriveClone(props: {
             >
               <Upload className="mr-2" size={20} />
               Upload
-            </Button>
+            </Button> */}
+            <SignedOut>
+              <SignUpButton />
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
         </div>
         <div className="bg-card rounded-lg shadow-xl">

@@ -1,10 +1,10 @@
-import type { File } from "../lib/mock-data"
+import {file_type} from "../db/schema";
 import {
   FileIcon,
 } from "lucide-react"
 import Link from "next/link"
 
-export function FileRow(props: { f: File }) {
+export function FileRow(props: { f: file_type }) {
     const file = props.f
     return (
       <div className="grid grid-cols-12 gap-4 items-center">
