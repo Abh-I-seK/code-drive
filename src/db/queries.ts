@@ -13,26 +13,26 @@ export async function addFolder(folder: folder_type) {
   return await db.insert(folder_Table).values(folder);
 }
 
-export function getFiles(folderId: number) {
-    return db.select().from(file_Table).where(eq(file_Table.parent,folderId));
+export function getFiles(folderId: number , ownerId: string) {
+    return db.select().from(file_Table).where(and(eq(file_Table.parent,folderId),eq(file_Table.ownerId,ownerId)));
 }
 
-export function getFolders(folderId: number) {
-    return db.select().from(folder_Table).where(eq(folder_Table.parent,folderId));
+export function getFolders(folderId: number , ownerId: string) {
+    return db.select().from(folder_Table).where(and(eq(folder_Table.parent,folderId),eq(folder_Table.ownerId,ownerId)));
 }
 
 export function getFileById(fileId: number , ownerId: string) {
     return db.select().from(file_Table).where(and(eq(file_Table.id,fileId),eq(file_Table.ownerId,ownerId)));
 }
 
-export async function getParentFolder(folderId: number) {
+export async function getParentFolder(folderId: number , ownerId: string) {
     const parents : folder_type[] = []
     let currentId : number | null = folderId
     while (currentId !== 0) {
       if(currentId === null){
         return parents;
       }
-      const folder = await db.select().from(folder_Table).where(eq(folder_Table.id,currentId));
+      const folder = await db.select().from(folder_Table).where(and(eq(folder_Table.id,currentId),eq(folder_Table.ownerId,ownerId)));
       if (folder.length > 0) {
         parents.unshift(folder[0])
         currentId = folder[0].parent

@@ -1,12 +1,16 @@
 import { addFile, addFolder } from "@/db/queries";
 import { file_type } from "@/db/schema";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server"
 
 
 export default async function Sandbox() {
     const user = await auth();
     if(!user.userId){
-        return <div>Not logged in</div>
+        return <SignedOut>
+        <SignUpButton />
+        <SignInButton />
+    </SignedOut>
     }
 
   return (
@@ -66,6 +70,10 @@ export default async function Sandbox() {
         <input type="number" name="parent" placeholder="parent"/> 
         <button type="submit">Submit</button>
         </form>
+        <hr className="border-2 border-black my-5"></hr>
+        <SignedIn>
+            <UserButton />
+        </SignedIn>
     </div>
   )
 }
