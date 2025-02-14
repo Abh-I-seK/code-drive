@@ -6,10 +6,11 @@ export const file_Table = pgTable(
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    url: text("url").notNull(),
+    code: text("code").notNull(),
+    language: text("language").notNull(),
     parent: integer("parent").notNull(),
     size: text("size").notNull(),
-    created_at : timestamp("created_at").defaultNow(),
+    created_at : timestamp("created_at").defaultNow().notNull(),
     ownerId : text("ownerId").notNull(),
   },
   (t) => [
@@ -26,8 +27,8 @@ export const folder_Table = pgTable(
     id: serial("id").primaryKey(),
     ownerId : text("ownerId").notNull(),
     name: text("name").notNull(),
-    parent: integer("parent"),
-    created_at : timestamp("created_at").defaultNow(),
+    parent: integer("parent").notNull(),
+    created_at : timestamp("created_at").defaultNow().notNull(),
   },
   (t) => [
     index("folder_parent_index").on(t.parent),

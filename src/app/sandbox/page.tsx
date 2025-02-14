@@ -1,34 +1,71 @@
-// import { db } from "@/db/drizzle"
-// import { file_Table, folder_Table } from "@/db/schema"
-// // import { mockFiles, mockFolders } from "@/lib/mock-data"
+import { addFile, addFolder } from "@/db/queries";
+import { file_type } from "@/db/schema";
+import { auth } from "@clerk/nextjs/server"
 
 
-// export default function Sandbox() {
-//   return (
-//     <div>
-//         <h1>Sandbox</h1>
-//         <form action={
-//             async ()=>{
-//                 "use server";
-//             mockFiles.forEach(async(file)=>{
-//                 const a = {
-//                     name: file.name,
-//                     url: file.url,
-//                     parent: parseInt(file.parent) === 1 ? 1 : 0,
-//                     size: file.size
-//                 }
-//                 await db.insert(file_Table).values(a);
-//             })
-//             mockFolders.forEach(async(folder)=>{
-//                 const a = {
-//                     name: folder.name,
-//                     parent: parseInt(folder.parent) === 1 ? 1 : 0
-//                 }
-//                 await db.insert(folder_Table).values(a);
-//             })
-//         }}>
-//         <button type="submit">Submit</button>
-//         </form>
-//     </div>
-//   )
-// }
+export default async function Sandbox() {
+    const user = await auth();
+    if(!user.userId){
+        return <div>Not logged in</div>
+    }
+
+  return (
+    <div>
+        <h1>Sandbox</h1>
+        <form action={
+            async (formData)=>{
+                "use server";
+                const name = formData.get("name") ?? ""; 
+                const code = formData.get("code") ?? "";
+                const language = formData.get("language") ?? "javascript";
+                const parent = formData.get("parent") ?? "0";
+                const ownerId = user.userId ?? "";
+                // console.log(name,code,language,parent,ownerId);
+                const a : any = {
+                    name: name,
+                    code: code,
+                    language: language,
+                    parent: parent,
+                    ownerId: ownerId,
+                    size: "2 MB"
+                }
+                await addFile(a);
+            }
+        }
+        className="flex flex-col gap-4 m-10 border-2 border-black"
+        >
+        <input type="text" name="name" placeholder="Name" />
+        <textarea name="code" placeholder="code"/>
+        <select name="language">
+            <option value="javascript">Javascript</option>
+            <option value="python">Python</option>
+            <option value="java">java</option>
+        </select>
+        <input type="number" name="parent" placeholder="parent"/> 
+        <button type="submit">Submit</button>
+        </form>
+        <hr className="border-2 border-black my-5"></hr>
+        <form action={
+            async (formData)=>{
+                "use server";
+                const name = formData.get("name") ?? ""; 
+                const parent = formData.get("parent") ?? "0";
+                const ownerId = user.userId ?? "";
+                const a : any = {
+                    name: name,
+                    parent: parent,
+                    ownerId: ownerId,
+                    size: "--"
+                }
+                await addFolder(a);
+            }
+        }
+        className="flex flex-col gap-4 m-10 border-2 border-black"
+        >
+        <input type="text" name="name" placeholder="Name" />
+        <input type="number" name="parent" placeholder="parent"/> 
+        <button type="submit">Submit</button>
+        </form>
+    </div>
+  )
+}

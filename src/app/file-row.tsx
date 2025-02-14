@@ -11,7 +11,7 @@ export function FileRow(props: { f: file_type }) {
         <div className="col-span-6 flex items-center">
           <Link
             target="_blank"
-            href={file.url || "#"}
+            href={`/w/${file.id}`}
             className="flex items-center text-foreground hover:text-blue-400"
           >
             <FileIcon className="mr-3" size={20} />

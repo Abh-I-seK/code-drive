@@ -1,5 +1,5 @@
 import GoogleDriveClone from "../../Drive-ui"
-import { getFiles, getFolders,getParentFolder } from "@/lib/queries"
+import { getFiles, getFolders,getParentFolder } from "@/db/queries"
 
 export default async function (props: {
   params: Promise<{ folderId: string }>
