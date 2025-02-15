@@ -1,5 +1,6 @@
 import { getFileById } from "@/db/queries"
 import { auth } from "@clerk/nextjs/server";
+import { CodeEditor } from "../../../components/code-editor";
 
 export default async function (props: { params: Promise<{ fid: string }> }) {
     const { fid } = await props.params
@@ -23,8 +24,7 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
     const file = f[0]
     return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      <h1>WorkSpace {fid}</h1>
-        {file.code}
+      <CodeEditor value={file.code} height="500px" />
     </div>
   )
 }
