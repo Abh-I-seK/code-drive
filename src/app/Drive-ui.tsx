@@ -1,22 +1,47 @@
-import { Upload, ChevronRight } from "lucide-react"
+"use client"
+import { ChevronRight, FilePlus, FolderPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { FileRow } from "./file-row"
 import { FolderRow } from "./folder-row"
 import { folder_type as FolderType, file_type as FileType } from "@/db/schema"
 import Link from "next/link"
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
-
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import PythonIcon from "../../public/Python"
+import JavaIcon from "../../public/Java"
+import CppIcon from "../../public/Cpp"
+import JavascriptIcon from "../../public/Javascript"
+import { useState } from "react"
+import { addFile } from "@/db/queries"
 export default function GoogleDriveClone(props: {
   files: FileType[]
   folders: FolderType[]
   parents: FolderType[]
+  user: string
+  currentFolder: number
 }) {
   const breadcrumbs = props.parents ?? []
-
-  const handleUpload = () => {
-    alert("Upload functionality would be implemented here")
-  }
+  
+  const [fileName , setFileName] = useState("");
+  const [language , setLanguage] = useState("");
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
@@ -51,16 +76,6 @@ export default function GoogleDriveClone(props: {
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            {/* <Button
-              // Figure it out how to make this a server component as no client side activity
-              // required here
-
-              // onClick={handleUpload}
-              className="bg-blue-600 text-white hover:bg-blue-700"
-            >
-              <Upload className="mr-2" size={20} />
-              Upload
-            </Button> */}
             <SignedOut>
               <SignUpButton />
               <SignInButton />
@@ -72,10 +87,74 @@ export default function GoogleDriveClone(props: {
         </div>
         <div className="bg-card rounded-lg shadow-xl">
           <div className="px-6 py-4 border-b border-border">
-            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
+            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground items-center">
               <div className="col-span-6">Name</div>
               <div className="col-span-3">Type</div>
-              <div className="col-span-3">Size</div>
+              <div className="col-span-3">
+                <span className="flex justify-between items-center">
+                  <span>Size</span>
+                  <span>
+                    <Dialog>
+                      <DialogTrigger
+                        type="button"
+                        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"
+                      >
+                        {/* <Button variant={"ghost"} className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"><FilePlus/></Button> */}
+                        <FilePlus className="w-5" />
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add File</DialogTitle>
+                          <DialogDescription>
+                            write the name of the file and select the langugage
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">
+                              File Name
+                            </Label>
+                            <Input
+                              id="name"
+                              className="col-span-3"
+                              required={true}
+                              onChange={(e)=>setFileName(e.target.value)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="language" className="text-right">
+                              Language
+                            </Label>
+                            <Select required={true} onValueChange={(e)=>setLanguage(e)}>
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select a language" />
+                              </SelectTrigger>
+                              <SelectContent id="language">
+                                <SelectGroup>
+                                  <SelectLabel>Language</SelectLabel>
+                                  <SelectItem value="python"><span className="flex gap-2 items-center"><PythonIcon/> Python</span></SelectItem>
+                                  <SelectItem value="java"><span className="flex gap-2 items-center"><JavaIcon/> Java</span></SelectItem>
+                                  <SelectItem value="javascript"><span className="flex gap-2 items-center"><JavascriptIcon/> Javascript</span></SelectItem>
+                                  <SelectItem value="c++"><span className="flex gap-2 items-center"><CppIcon/> C++</span></SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button onClick={async()=>{}} type="submit">Add File</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    <Button
+                      variant={"ghost"}
+                      className="px-2 py-0 text-muted-foreground hover:text-foreground"
+                    >
+                      <FolderPlus />
+                    </Button>
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
           <ul>

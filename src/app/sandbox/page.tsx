@@ -1,8 +1,10 @@
 import { addFile, addFolder } from "@/db/queries";
-import { file_type } from "@/db/schema";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server"
-
+import PythonIcon from "../../../public/Python";
+import JavaIcon from "../../../public/Java";
+import JavascriptIcon from "../../../public/Javascript";
+import CppIcon from "../../../public/Cpp";
 
 export default async function Sandbox() {
     const user = await auth();
@@ -16,6 +18,10 @@ export default async function Sandbox() {
   return (
     <div>
         <h1>Sandbox</h1>
+        <PythonIcon/>
+        <JavaIcon/>
+        <JavascriptIcon/>
+        <CppIcon/>
         <form action={
             async (formData)=>{
                 "use server";

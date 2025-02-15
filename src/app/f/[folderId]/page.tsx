@@ -22,7 +22,7 @@ export default async function (props: {
   
   return (
     <>
-      <GoogleDriveClone files={files} folders={folders} parents={parents} />
+      <GoogleDriveClone files={files} folders={folders} parents={parents} user={user.userId} currentFolder={parsedFolderId}/>
     </>
   )
 }
