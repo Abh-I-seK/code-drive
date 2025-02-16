@@ -28,7 +28,7 @@ import PythonIcon from "../../public/Python"
 import JavaIcon from "../../public/Java"
 import CppIcon from "../../public/Cpp"
 import JavascriptIcon from "../../public/Javascript"
-import { addFile } from "@/db/queries"
+import { addFile, addFolder } from "@/db/queries"
 import { validateAndAddExtension } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 
@@ -175,12 +175,60 @@ export default function GoogleDriveClone(props: {
                         </form>
                       </DialogContent>
                     </Dialog>
-                    <Button
-                      variant={"ghost"}
-                      className="px-2 py-0 text-muted-foreground hover:text-foreground"
-                    >
-                      <FolderPlus />
-                    </Button>
+                    {/* ------------------------------------------------------------------------------- */}
+                    <Dialog>
+                      <DialogTrigger
+                        type="button"
+                        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"
+                      >
+                        <FolderPlus className="w-5" />
+                      </DialogTrigger>
+                      <DialogContent>
+                        <form action={
+                          async(formData)=>{
+                            "use server";
+                            const name = formData.get("name");
+                            
+                            if(!name){
+                              return;
+                            }
+
+                            // fix type here
+                            const a : any = {
+                              name: name.toString(),
+                              parent: props.currentFolder,
+                              ownerId : props.user,
+                              size : "--"
+                            }
+                            // console.log(a);
+                            await addFolder(a);
+                            revalidatePath("/f/"+props.currentFolder);
+                        }}>
+                        <DialogHeader>
+                          <DialogTitle>Add Folder</DialogTitle>
+                          <DialogDescription>
+                            write the name of the folder
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">
+                              Folder Name
+                            </Label>
+                            <Input
+                              name="name"
+                              id="name"
+                              className="col-span-3"
+                              required={true}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit">Create Folder</Button>
+                        </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </span>
                 </span>
               </div>
