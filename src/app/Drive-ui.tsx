@@ -1,4 +1,3 @@
-"use client"
 import { ChevronRight, FilePlus, FolderPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -29,8 +28,10 @@ import PythonIcon from "../../public/Python"
 import JavaIcon from "../../public/Java"
 import CppIcon from "../../public/Cpp"
 import JavascriptIcon from "../../public/Javascript"
-import { useState } from "react"
 import { addFile } from "@/db/queries"
+import { validateAndAddExtension } from "@/lib/utils"
+import { revalidatePath } from "next/cache"
+
 export default function GoogleDriveClone(props: {
   files: FileType[]
   folders: FolderType[]
@@ -39,9 +40,6 @@ export default function GoogleDriveClone(props: {
   currentFolder: number
 }) {
   const breadcrumbs = props.parents ?? []
-  
-  const [fileName , setFileName] = useState("");
-  const [language , setLanguage] = useState("");
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
@@ -103,6 +101,36 @@ export default function GoogleDriveClone(props: {
                         <FilePlus className="w-5" />
                       </DialogTrigger>
                       <DialogContent>
+                        <form action={
+                          async(formData)=>{
+                            "use server";
+                            const lang = formData.get("language");
+                            const name = formData.get("name");
+                            
+                            if(!lang || !name){
+                              return;
+                            }
+
+                            let filename = "";
+                            try{
+                              filename = validateAndAddExtension(name.toString(), lang.toString());
+                            }catch(e){
+                              console.log(e);
+                              return;
+                            }
+                            // fix type here
+                            const a : any = {
+                              name: filename,
+                              language: lang.toString(),
+                              parent: props.currentFolder,
+                              code : "",
+                              ownerId : props.user,
+                              size : "2 MB"
+                            }
+                            // console.log(a);
+                            await addFile(a);
+                            revalidatePath("/f/"+props.currentFolder);
+                        }}>
                         <DialogHeader>
                           <DialogTitle>Add File</DialogTitle>
                           <DialogDescription>
@@ -115,17 +143,17 @@ export default function GoogleDriveClone(props: {
                               File Name
                             </Label>
                             <Input
+                              name="name"
                               id="name"
                               className="col-span-3"
                               required={true}
-                              onChange={(e)=>setFileName(e.target.value)}
                             />
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="language" className="text-right">
                               Language
                             </Label>
-                            <Select required={true} onValueChange={(e)=>setLanguage(e)}>
+                            <Select required={true} name="language">
                               <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select a language" />
                               </SelectTrigger>
@@ -142,8 +170,9 @@ export default function GoogleDriveClone(props: {
                           </div>
                         </div>
                         <DialogFooter>
-                          <Button onClick={async()=>{}} type="submit">Add File</Button>
+                          <Button type="submit">Add File</Button>
                         </DialogFooter>
+                        </form>
                       </DialogContent>
                     </Dialog>
                     <Button
