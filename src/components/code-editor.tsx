@@ -3,19 +3,64 @@ import { useState, useEffect } from "react"
 import CodeMirror from "@uiw/react-codemirror"
 import { javascript } from "@codemirror/lang-javascript"
 import { useTheme } from "next-themes"
+import { Button } from "@/components/ui/button"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
+import { Play, Share2 } from "lucide-react"
+import { Code_Runner } from "@/db/queries"
 
 interface CodeEditorProps {
   value: string
   onChange?: (value: string) => void
   height?: string
+  language?: string
   className?: string
 }
 
-export function CodeEditor({ value, onChange, height = "300px", className }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, language ,height = "300px", className }: CodeEditorProps) {
   const { theme: applicationTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [code, setCode] = useState("")
+  const [output, setOutput] = useState("")
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [running , setRunning] = useState(false);
+  
+  const handleRunCode = async() => {
+    try {
+      setRunning(true);
+      const res = await Code_Runner(code,language ?? "");
+      setOutput(res); 
+      setRunning(false);
+    } catch (e) {
+      setOutput(`Error: ${e}`)
+    }
+    setIsDrawerOpen(true)
+  }
+
+  const handleShare = () => {
+    navigator.clipboard
+      .writeText(code)
+      .then(() => {
+        alert("Code copied to clipboard!")
+      })
+      .catch((err) => {
+        console.error("Failed to copy code:", err)
+      })
+  }
+
   useEffect(() => {
     setMounted(true)
+    setCode(value);
+    setInterval(()=>{
+      console.log("hi");
+    },2000);
   }, [])
 
   if (!mounted) {
@@ -28,16 +73,52 @@ export function CodeEditor({ value, onChange, height = "300px", className }: Cod
   }
 
   return (
-    <div className={className}>
-      <CodeMirror
-        value={value}
-        height={height}
-        theme={applicationTheme === "dark" ? "dark" : "light"}
-        onChange={onChange}
-        extensions={[javascript({ jsx: true })]}
-        className="rounded-md border text-md text-wrap md:text-lg"
-      />
+    <div className="min-h-screen bg-background md:p-8">
+      <div className="mx-auto max-w-4xl space-y-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Code Editor</h1>
+          <div className="flex gap-2">
+            <Button onClick={handleRunCode} className="gap-2" disabled={running} size="sm">
+              <Play className="h-4 w-4" />
+              Run
+            </Button>
+            <Button onClick={handleShare} variant="outline" className="gap-2" size="sm">
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card">
+          <CodeMirror
+            value={code}
+            height={height}
+            theme={applicationTheme === "dark" ? "dark" : "light"}
+            extensions={[javascript({ jsx: true })]}
+            onChange={(value) => setCode(value)}
+            className="overflow-hidden rounded-lg text-lg"
+          />
+        </div>
+
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerContent>
+            <div className="mx-auto w-full max-w-4xl">
+              <DrawerHeader>
+                <DrawerTitle>Output</DrawerTitle>
+                <DrawerDescription>Result of your code execution</DrawerDescription>
+              </DrawerHeader>
+              <div className="p-4">
+                <pre className="rounded-lg bg-muted p-4 font-mono">{output || "No output"}</pre>
+              </div>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button variant="outline">Close</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
     </div>
   )
 }
-

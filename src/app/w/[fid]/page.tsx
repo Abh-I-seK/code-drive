@@ -24,7 +24,7 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
     const file = f[0]
     return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      <CodeEditor value={file.code} height="500px" />
+      <CodeEditor value={file.code} language={file.language} height="500px" />
     </div>
   )
 }

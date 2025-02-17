@@ -3,7 +3,7 @@ import { db } from "@/db/drizzle"
 import { file_Table, folder_Table } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { folder_type,file_type } from "@/db/schema";
-
+import axios from "axios";
 
 export async function addFile(file: file_type) {
   return await db.insert(file_Table).values(file);
@@ -41,4 +41,51 @@ export async function getParentFolder(folderId: number , ownerId: string) {
       }
     }
     return parents
+}
+
+export async function Code_Runner(code : string , language : string) {
+  const src_code = btoa(code);
+  let langId = 0;
+  switch(language){
+    case "java":
+      langId = 91
+      break;
+    case "c++":
+      langId = 53
+      break;
+    case "python":
+      langId = 92
+      break;
+    case "javascript":
+      langId = 93
+      break;
+  }
+  const rapidAPI = options(langId , src_code);
+  const response = await axios.request(rapidAPI);
+  const output : string = atob(response.data.stdout);
+  return output; 
+}
+
+function options(language_id: number, source_code: string, stdin? : string ) {
+  stdin = stdin ?? "";
+  const opt ={
+      method: 'POST',
+      url: 'https://judge0-ce.p.rapidapi.com/submissions',
+      params: {
+      base64_encoded: 'true',
+      wait: 'true'
+      },
+      headers: {
+      'content-type': 'application/json',
+      'Content-Type': 'application/json',
+      'X-RapidAPI-Key': process.env.NEXT_PUBLIC_RapidAPI_KEY,
+      'X-RapidAPI-Host': process.env.NEXT_PUBLIC_RapidAPI_HOST
+      },
+      data: {
+      language_id: language_id,
+      source_code: source_code,
+      stdin: stdin
+      }
+  };
+  return opt;
 }
