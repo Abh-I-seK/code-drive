@@ -2,6 +2,36 @@ import { getFileById } from "@/db/queries"
 import { auth } from "@clerk/nextjs/server";
 import { CodeEditor } from "../../../components/code-editor";
 
+export async function generateMetadata(props: { params: Promise<{ fid: string }> }) {
+  const { fid } = await props.params
+  const user = await auth();
+
+  if(!user.userId){
+    return {
+      title : "Log in !!"
+    }
+  }
+  const parsedFid = parseInt(fid)
+  if (isNaN(parsedFid)) {
+    return {
+      title : "fileNotFound"
+    }
+  }
+
+  const f = await getFileById(parsedFid,user.userId);
+  
+  if(f.length === 0){
+      return {
+        title : "fileNotFound"
+      }
+  }
+
+  return {
+    title: "CodeDrive - " + f[0].name,
+  }
+}
+
+
 export default async function (props: { params: Promise<{ fid: string }> }) {
     const { fid } = await props.params
     const user = await auth();
@@ -9,7 +39,6 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
     if(!user.userId){
         return <div>Not logged in</div>
     }
-
     const parsedFid = parseInt(fid)
     if (isNaN(parsedFid)) {
         return <div>Invalid file id</div>

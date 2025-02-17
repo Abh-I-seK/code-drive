@@ -4,6 +4,7 @@ import { file_Table, folder_Table } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { folder_type,file_type } from "@/db/schema";
 import axios from "axios";
+import { cache } from "react";
 
 export async function addFile(file: file_type) {
   return await db.insert(file_Table).values(file);
@@ -20,10 +21,10 @@ export function getFiles(folderId: number , ownerId: string) {
 export function getFolders(folderId: number , ownerId: string) {
     return db.select().from(folder_Table).where(and(eq(folder_Table.parent,folderId),eq(folder_Table.ownerId,ownerId)));
 }
-
-export function getFileById(fileId: number , ownerId: string) {
+// should I cache ??
+export const getFileById = ((fileId: number , ownerId: string) => {
     return db.select().from(file_Table).where(and(eq(file_Table.id,fileId),eq(file_Table.ownerId,ownerId)));
-}
+})
 
 export async function getParentFolder(folderId: number , ownerId: string) {
     const parents : folder_type[] = []
