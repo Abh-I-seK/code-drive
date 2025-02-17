@@ -13,29 +13,31 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { Play, Share2 } from "lucide-react"
+import { Play } from "lucide-react"
 import { Code_Runner } from "@/db/queries"
+import ShareButton from "./Share-Button"
+import { file_type } from "@/db/schema"
 
-interface CodeEditorProps {
+type CodeEditorProps = {
   value: string
   onChange?: (value: string) => void
   height?: string
-  language?: string
+  file?: file_type
   className?: string
 }
 
-export function CodeEditor({ value, onChange, language ,height = "300px", className }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, file ,height = "300px", className }: CodeEditorProps) {
   const { theme: applicationTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [code, setCode] = useState("")
   const [output, setOutput] = useState("")
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [running , setRunning] = useState(false);
-  
+
   const handleRunCode = async() => {
     try {
       setRunning(true);
-      const res = await Code_Runner(code,language ?? "");
+      const res = await Code_Runner(code, file?.language ?? "");
       setOutput(res); 
       setRunning(false);
     } catch (e) {
@@ -44,23 +46,12 @@ export function CodeEditor({ value, onChange, language ,height = "300px", classN
     setIsDrawerOpen(true)
   }
 
-  const handleShare = () => {
-    navigator.clipboard
-      .writeText(code)
-      .then(() => {
-        alert("Code copied to clipboard!")
-      })
-      .catch((err) => {
-        console.error("Failed to copy code:", err)
-      })
-  }
-
   useEffect(() => {
     setMounted(true)
     setCode(value);
-    setInterval(()=>{
-      console.log("hi");
-    },2000);
+    // setInterval(()=>{
+    //   console.log("hi");
+    // },2000);
   }, [])
 
   if (!mounted) {
@@ -82,10 +73,7 @@ export function CodeEditor({ value, onChange, language ,height = "300px", classN
               <Play className="h-4 w-4" />
               Run
             </Button>
-            <Button onClick={handleShare} variant="outline" className="gap-2" size="sm">
-              <Share2 className="h-4 w-4" />
-              Share
-            </Button>
+            <ShareButton file={file}/>
           </div>
         </div>
 
