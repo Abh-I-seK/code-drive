@@ -2,10 +2,19 @@ import { auth } from "@clerk/nextjs/server";
 import GoogleDriveClone from "../../Drive-ui"
 import { getFiles, getFolders,getParentFolder } from "@/db/queries"
 import { Suspense } from "react";
+import { cache } from "react";
+
+const authCached = cache(async()=>{
+  return await auth();
+});
+
+const getParentFolderCached = cache(async(folderId : number,userId : string)=>{
+  return await getParentFolder(folderId,userId);
+});
 
 export async function generateMetadata(props: { params: Promise<{ folderId: string }> }) {
   const { folderId } = await props.params
-  const user = await auth();
+  const user = await authCached();
 
   if(!user.userId){
     return {
@@ -19,7 +28,7 @@ export async function generateMetadata(props: { params: Promise<{ folderId: stri
       title : "folderNotFound"
     }
   }
-  const parents = await getParentFolder(parsedFolderId,user.userId);
+  const parents = await getParentFolderCached(parsedFolderId,user.userId);
   if(parents.length === 0){
     return {
       title : "CodeDrive"
@@ -34,7 +43,7 @@ export default async function (props: {
   params: Promise<{ folderId: string }>
 }) {
 
-  const user = await auth();
+  const user = await authCached();
   if(!user.userId){
     return <div>Not logged in</div>
   }
@@ -46,7 +55,7 @@ export default async function (props: {
     return <div>Invalid folder id</div>
   }
   // same time at parallel
-  const [files, folders , parents] = await Promise.all([getFiles(parsedFolderId,user.userId), getFolders(parsedFolderId,user.userId), getParentFolder(parsedFolderId,user.userId)]);
+  const [files, folders , parents] = await Promise.all([getFiles(parsedFolderId,user.userId), getFolders(parsedFolderId,user.userId), getParentFolderCached(parsedFolderId,user.userId)]);
   
   return (
     <Suspense fallback={<div>Loading...</div>}>

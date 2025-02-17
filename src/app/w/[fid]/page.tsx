@@ -1,10 +1,18 @@
 import { getFileById } from "@/db/queries"
 import { auth } from "@clerk/nextjs/server";
 import { CodeEditor } from "../../../components/code-editor";
+import {cache} from "react";
+const getFileByIdCached = cache(async(fid : number,userId : string)=>{
+  return await getFileById(fid,userId);
+});
+
+const authCached = cache(async()=>{
+  return await auth();
+});
 
 export async function generateMetadata(props: { params: Promise<{ fid: string }> }) {
   const { fid } = await props.params
-  const user = await auth();
+  const user = await authCached();
 
   if(!user.userId){
     return {
@@ -18,7 +26,7 @@ export async function generateMetadata(props: { params: Promise<{ fid: string }>
     }
   }
 
-  const f = await getFileById(parsedFid,user.userId);
+  const f = await getFileByIdCached(parsedFid,user.userId);
   
   if(f.length === 0){
       return {
@@ -34,7 +42,7 @@ export async function generateMetadata(props: { params: Promise<{ fid: string }>
 
 export default async function (props: { params: Promise<{ fid: string }> }) {
     const { fid } = await props.params
-    const user = await auth();
+    const user = await authCached();
 
     if(!user.userId){
         return <div>Not logged in</div>
@@ -44,7 +52,7 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
         return <div>Invalid file id</div>
     }
 
-    const f = await getFileById(parsedFid,user.userId);
+    const f = await getFileByIdCached(parsedFid,user.userId);
 
     if(f.length === 0){
         return <div>File not found</div>

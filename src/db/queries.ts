@@ -4,7 +4,6 @@ import { file_Table, folder_Table } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { folder_type,file_type } from "@/db/schema";
 import axios from "axios";
-import { cache } from "react";
 
 export async function addFile(file: file_type) {
   return await db.insert(file_Table).values(file);
