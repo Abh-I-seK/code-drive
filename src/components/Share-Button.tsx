@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Globe, Share2 } from "lucide-react"
 import { Lock, Copy } from "lucide-react"
@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select"
 import { file_type } from "@/db/schema"
 import { updateVisibility } from "@/db/action"
-// import { ButtonVisibility } from "./button-visibility"
 
 type ShareButtonProps = {
   file?: file_type
@@ -31,6 +30,7 @@ export default function ShareButton({ file }: ShareButtonProps) {
   const publicMsg = "Anyone with the link can open the file"
   const [global, setGlobal] = useState(file?.isPublic ?? false)
   const [shareLink, setShareLink] = useState("")
+  const [working , setWorking] = useState(false);
 
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink)
@@ -66,7 +66,20 @@ export default function ShareButton({ file }: ShareButtonProps) {
               <div className="flex-1">
                 <Select
                   defaultValue={global ? "anyone" : "restricted"}
-                  onValueChange={(e) => setGlobal(e === "anyone")}
+                  onValueChange={async(e) => {
+                    const nw = e === "anyone";
+                    setGlobal(e === "anyone")
+                    setWorking(true)
+                    if (file) {
+                      await updateVisibility(nw, file.id)
+                    }
+                    setWorking(false)
+                    if(nw){
+                      setShareLink("http://localhost:3000/p/"+file?.id)
+                    }else{
+                      setShareLink("http://localhost:3000/w/"+file?.id)
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -84,18 +97,13 @@ export default function ShareButton({ file }: ShareButtonProps) {
           </div>
         </div>
         <div className="flex justify-between">
-          <Button variant="outline" onClick={copyLink}>
+          <Button variant="outline" onClick={copyLink} disabled={working}>
             <Copy className="h-4 w-4 mr-2" />
             Copy link
           </Button>
           <Button
             type="submit"
-            onClick={async () => {
-              if (file) {
-                await updateVisibility(global, file.id)
-              }
-              setOpen(false)
-            }}
+            onClick={() => {setOpen(false)}}
           >
             Done
           </Button>
