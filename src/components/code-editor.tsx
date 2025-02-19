@@ -24,9 +24,10 @@ type CodeEditorProps = {
   height?: string
   file?: file_type
   className?: string
+  publicFile? : boolean
 }
 
-export function CodeEditor({ value, onChange, file ,height = "300px", className }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, file ,height = "300px", className,publicFile = false }: CodeEditorProps) {
   const { theme: applicationTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [code, setCode] = useState("")
@@ -73,7 +74,7 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className 
               <Play className="h-4 w-4" />
               Run
             </Button>
-            <ShareButton file={file}/>
+            {!publicFile && <ShareButton file={file}/>}
           </div>
         </div>
 

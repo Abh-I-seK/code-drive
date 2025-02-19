@@ -1,5 +1,5 @@
 import { InferSelectModel } from "drizzle-orm"
-import { text, pgTable, serial, index, integer, timestamp } from "drizzle-orm/pg-core"
+import { text, pgTable, serial, index, integer, timestamp, boolean } from "drizzle-orm/pg-core"
 
 export const file_Table = pgTable(
   "file",
@@ -12,6 +12,7 @@ export const file_Table = pgTable(
     size: text("size").notNull(),
     created_at : timestamp("created_at").defaultNow().notNull(),
     ownerId : text("ownerId").notNull(),
+    isPublic : boolean("isPublic").notNull().default(false),
   },
   (t) => [
     index("file_parent_index").on(t.parent),

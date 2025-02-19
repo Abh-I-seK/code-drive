@@ -20,10 +20,19 @@ export function getFiles(folderId: number , ownerId: string) {
 export function getFolders(folderId: number , ownerId: string) {
     return db.select().from(folder_Table).where(and(eq(folder_Table.parent,folderId),eq(folder_Table.ownerId,ownerId)));
 }
+
+export const getPublicFileById = (fileId:number)=>{
+  return db.select().from(file_Table).where(and(eq(file_Table.id,fileId),eq(file_Table.isPublic,true)));
+}
+
 // should I cache ??
 export const getFileById = ((fileId: number , ownerId: string) => {
     return db.select().from(file_Table).where(and(eq(file_Table.id,fileId),eq(file_Table.ownerId,ownerId)));
 })
+
+export async function updateVisibility(isPublic : boolean , fileId : number) {
+  return await db.update(file_Table).set({isPublic : isPublic}).where(eq(file_Table.id,fileId));
+}
 
 export async function getParentFolder(folderId: number , ownerId: string) {
     const parents : folder_type[] = []

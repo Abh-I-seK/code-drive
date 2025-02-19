@@ -1,11 +1,13 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Globe, Share2 } from "lucide-react"
 import { Lock, Copy } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { file_type } from "@/db/schema"
+import { updateVisibility } from "@/db/queries"
+import { ButtonVisibility } from "./button-visibility"
 
 type ShareButtonProps = {
   file?: file_type
@@ -16,9 +18,10 @@ export default function ShareButton({file}:ShareButtonProps){
     const privateMsg = "Only people with access can open with the link";
     const publicMsg = "Anyone with the link can open the file";
     const [global, setGlobal] = useState(false);
+    const [shareLink, setShareLink] = useState("");
 
     const copyLink = () => {
-        navigator.clipboard.writeText("https://example.com/share-link")
+        navigator.clipboard.writeText(shareLink)
     }
 
     function Symbol(){
@@ -49,7 +52,7 @@ export default function ShareButton({file}:ShareButtonProps){
                   <Symbol/>
                 </div>
                 <div className="flex-1">
-                  <Select defaultValue="restricted" onValueChange={(e)=>{setGlobal(e === 'anyone')}}>
+                  <Select defaultValue="restricted" onValueChange={(e)=>setGlobal(e === 'anyone')}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -68,7 +71,10 @@ export default function ShareButton({file}:ShareButtonProps){
               <Copy className="h-4 w-4 mr-2" />
               Copy link
             </Button>
-            <Button onClick={() => setOpen(false)}>Done</Button>
+            {/* <div> */}
+            {<ButtonVisibility isPublic={global} fileId={file?.id ?? 0} /> }
+            {/* </div> */}
+            {/* <Button type="submit" onClick={() => setOpen(false)}>Done</Button> */}
           </div>
         </DialogContent>
       </Dialog>
