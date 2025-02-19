@@ -30,10 +30,6 @@ export const getFileById = ((fileId: number , ownerId: string) => {
     return db.select().from(file_Table).where(and(eq(file_Table.id,fileId),eq(file_Table.ownerId,ownerId)));
 })
 
-export async function updateVisibility(isPublic : boolean , fileId : number) {
-  return await db.update(file_Table).set({isPublic : isPublic}).where(eq(file_Table.id,fileId));
-}
-
 export async function getParentFolder(folderId: number , ownerId: string) {
     const parents : folder_type[] = []
     let currentId : number | null = folderId
