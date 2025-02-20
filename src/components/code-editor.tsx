@@ -65,12 +65,12 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
   }
 
   return (
-    <div className="min-h-screen bg-background md:p-8">
+    <div className="max-h-screen bg-background md:p-4">
       <div className="mx-auto max-w-4xl space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Code Editor</h1>
           <div className="flex gap-2">
-            <Button onClick={handleRunCode} className="gap-2" disabled={running} size="sm">
+            <Button onClick={handleRunCode} disabled={running}>
               <Play className="h-4 w-4" />
               Run
             </Button>

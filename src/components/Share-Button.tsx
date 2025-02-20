@@ -48,7 +48,7 @@ export default function ShareButton({ file }: ShareButtonProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Share2 className="h-4 w-4 mr-2" />
+          <Share2 className="h-4 w-4 mr-1" />
           Share
         </Button>
       </DialogTrigger>

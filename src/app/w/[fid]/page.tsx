@@ -60,7 +60,7 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
 
     const file = f[0]
     return (
-    <div className="min-h-screen bg-background text-foreground p-8">
+    <div className="min-h-screen bg-background text-foreground p-4">
       <CodeEditor value={file.code} file={file} height="500px" />
     </div>
   )
