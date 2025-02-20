@@ -29,10 +29,11 @@ export default function ShareButton({ file }: ShareButtonProps) {
   const privateMsg = "Only people with access can open with the link"
   const publicMsg = "Anyone with the link can open the file"
   const [global, setGlobal] = useState(file?.isPublic ?? false)
-  const [shareLink, setShareLink] = useState("")
+  const [shareLink, setShareLink] = useState(file?.isPublic ? process.env.NEXT_PUBLIC_URL+"/p/"+file?.id : process.env.NEXT_PUBLIC_URL+"/w/"+file?.id);
   const [working , setWorking] = useState(false);
 
   const copyLink = () => {
+    console.log(shareLink)
     navigator.clipboard.writeText(shareLink)
   }
 
@@ -75,9 +76,9 @@ export default function ShareButton({ file }: ShareButtonProps) {
                     }
                     setWorking(false)
                     if(nw){
-                      setShareLink("http://localhost:3000/p/"+file?.id)
+                      setShareLink(process.env.NEXT_PUBLIC_URL+"/p/"+file?.id)
                     }else{
-                      setShareLink("http://localhost:3000/w/"+file?.id)
+                      setShareLink(process.env.NEXT_PUBLIC_URL+"/w/"+file?.id)
                     }
                   }}
                 >

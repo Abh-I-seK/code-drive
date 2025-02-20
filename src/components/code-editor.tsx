@@ -84,7 +84,7 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
           <CodeMirror
             value={code}
             height={height}
-            theme={applicationTheme === "dark" ? "dark" : "light"}
+            theme={"dark"}
             extensions={[javascript({ jsx: true })]}
             onChange={(value) => setCode(value)}
             className="overflow-hidden rounded-lg text-lg"
