@@ -67,8 +67,14 @@ export async function Code_Runner(code : string , language : string) {
   }
   const rapidAPI = options(langId , src_code);
   const response = await axios.request(rapidAPI);
+  if(!response.data.stdout){
+    const ok = response.data.status.description;
+    const errMsg = atob(response.data.stderr);
+    const msg = ok + "\n" + errMsg + "\n" + atob(response.data.message);
+    return {ok : false , msg};
+  }
   const output : string = atob(response.data.stdout);
-  return output; 
+  return {ok : true , msg:output}; 
 }
 
 function options(language_id: number, source_code: string, stdin? : string ) {

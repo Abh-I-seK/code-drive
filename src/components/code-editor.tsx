@@ -34,12 +34,14 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
   const [output, setOutput] = useState("")
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [running , setRunning] = useState(false);
+  const [codeError , setCodeError] = useState(false);
 
   const handleRunCode = async() => {
     try {
       setRunning(true);
       const res = await Code_Runner(code, file?.language ?? "");
-      setOutput(res); 
+      setCodeError(res.ok === false);
+      setOutput(res.msg); 
       setRunning(false);
     } catch (e) {
       setOutput(`Error: ${e}`)
@@ -97,7 +99,7 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
                 <DrawerDescription>Result of your code execution</DrawerDescription>
               </DrawerHeader>
               <div className="p-4">
-                <pre className="rounded-lg bg-muted p-4 font-mono">{output || "No output"}</pre>
+                <pre className={`rounded-lg bg-muted p-4 font-mono ${codeError ? "text-red-500" : "text-emerald-500"}`}>{output || "No output"}</pre>
               </div>
               <DrawerFooter>
                 <DrawerClose asChild>
