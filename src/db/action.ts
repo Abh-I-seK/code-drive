@@ -1,12 +1,91 @@
 "use server"
 import { db } from "@/db/drizzle"
 import { file_Table } from "@/db/schema"
+import { validateAndAddExtension } from "@/lib/utils"
 import { eq } from "drizzle-orm"
+import { revalidatePath } from "next/cache"
+import { addFile, addFolder } from "./queries"
 
-export async function updateVisibility(isPublic : boolean , fileId : number) {
-    await db.update(file_Table).set({isPublic : isPublic}).where(eq(file_Table.id,fileId));
+export async function updateVisibility(isPublic: boolean, fileId: number) {
+  await db
+    .update(file_Table)
+    .set({ isPublic: isPublic })
+    .where(eq(file_Table.id, fileId))
 }
 
-export async function saveFile(code : string , fileId : number) {
-    await db.update(file_Table).set({code : code}).where(eq(file_Table.id,fileId));
+export async function saveFile(code: string, fileId: number) {
+  await db
+    .update(file_Table)
+    .set({ code: code })
+    .where(eq(file_Table.id, fileId))
+}
+
+export async function addFileAction(
+  formData: FormData,
+  currentFolder: number,
+  user: string
+) {
+  const lang = formData.get("language")
+  const name = formData.get("name")
+
+  if (!lang || !name) {
+    return
+  }
+
+  let filename = ""
+  try {
+    filename = validateAndAddExtension(name.toString(), lang.toString())
+  } catch (e) {
+    console.log(e)
+    return
+  }
+
+  if(filename.includes(".py") && lang.toString().toLowerCase() !== "python"){
+    return;
+  }
+  if(filename.includes(".java") && lang.toString().toLowerCase() !== "java"){
+    return;
+  }
+  if(filename.includes(".js") && lang.toString().toLowerCase() !== "javascript"){
+    return;
+  }
+  if(filename.includes(".cpp") && lang.toString().toLowerCase() !== "c++"){
+    return;
+  }
+
+  // fix type here
+  const a: any = {
+    name: filename,
+    language: lang.toString(),
+    parent: currentFolder,
+    code: "",
+    ownerId: user,
+    size: "2 MB",
+  }
+  // console.log(a);
+  await addFile(a)
+  revalidatePath("/f/" + currentFolder)
+}
+
+export async function addFolderAction(
+  formData: FormData,
+  currentFolder: number,
+  user: string
+) {
+  const name = formData.get("name")
+
+  if (!name) {
+    return
+  }
+
+  // fix type here
+  const a: any = {
+    name: name.toString(),
+    parent: currentFolder,
+    ownerId: user,
+    size: "--",
+  }
+  // console.log(a);
+  await addFolder(a)
+  revalidatePath("/f/" + currentFolder)
 }

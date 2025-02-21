@@ -28,9 +28,7 @@ import PythonIcon from "../../public/Python"
 import JavaIcon from "../../public/Java"
 import CppIcon from "../../public/Cpp"
 import JavascriptIcon from "../../public/Javascript"
-import { addFile, addFolder } from "@/db/queries"
-import { validateAndAddExtension } from "@/lib/utils"
-import { revalidatePath } from "next/cache"
+import { addFileAction, addFolderAction } from "@/db/action"
 
 export default function GoogleDriveClone(props: {
   files: FileType[]
@@ -104,32 +102,7 @@ export default function GoogleDriveClone(props: {
                         <form action={
                           async(formData)=>{
                             "use server";
-                            const lang = formData.get("language");
-                            const name = formData.get("name");
-                            
-                            if(!lang || !name){
-                              return;
-                            }
-
-                            let filename = "";
-                            try{
-                              filename = validateAndAddExtension(name.toString(), lang.toString());
-                            }catch(e){
-                              console.log(e);
-                              return;
-                            }
-                            // fix type here
-                            const a : any = {
-                              name: filename,
-                              language: lang.toString(),
-                              parent: props.currentFolder,
-                              code : "",
-                              ownerId : props.user,
-                              size : "2 MB"
-                            }
-                            // console.log(a);
-                            await addFile(a);
-                            revalidatePath("/f/"+props.currentFolder);
+                            await addFileAction(formData, props.currentFolder, props.user);
                         }}>
                         <DialogHeader>
                           <DialogTitle>Add File</DialogTitle>
@@ -187,22 +160,7 @@ export default function GoogleDriveClone(props: {
                         <form action={
                           async(formData)=>{
                             "use server";
-                            const name = formData.get("name");
-                            
-                            if(!name){
-                              return;
-                            }
-
-                            // fix type here
-                            const a : any = {
-                              name: name.toString(),
-                              parent: props.currentFolder,
-                              ownerId : props.user,
-                              size : "--"
-                            }
-                            // console.log(a);
-                            await addFolder(a);
-                            revalidatePath("/f/"+props.currentFolder);
+                            await addFolderAction(formData, props.currentFolder, props.user);
                         }}>
                         <DialogHeader>
                           <DialogTitle>Add Folder</DialogTitle>

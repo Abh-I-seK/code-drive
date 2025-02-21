@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react"
 import CodeMirror from "@uiw/react-codemirror"
 import { javascript } from "@codemirror/lang-javascript"
+import {java} from "@codemirror/lang-java"
+import {python} from "@codemirror/lang-python"
+import {cpp} from "@codemirror/lang-cpp"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -26,6 +29,19 @@ type CodeEditorProps = {
   file: file_type
   className?: string
   publicFile?: boolean
+}
+
+function getLang(lang : string){
+  switch (lang) {
+    case "java":
+      return java()
+    case "python":
+      return python()
+    case "c++":
+      return cpp()
+    default:
+      return javascript({ jsx: true })
+  }
 }
 
 export function CodeEditor({
@@ -109,7 +125,7 @@ export function CodeEditor({
             value={code}
             height={height}
             theme={"dark"}
-            extensions={[javascript({ jsx: true })]}
+            extensions={[getLang(file.language)]}
             onChange={(value) => setCode(value)}
             className="overflow-hidden rounded-lg text-lg"
           />
