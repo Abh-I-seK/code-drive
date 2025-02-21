@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react"
 import CodeMirror from "@uiw/react-codemirror"
 import { javascript } from "@codemirror/lang-javascript"
-import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -13,36 +12,55 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { Play } from "lucide-react"
+import { Play, Save } from "lucide-react"
 import { Code_Runner } from "@/db/queries"
 import ShareButton from "./Share-Button"
 import { file_type } from "@/db/schema"
+import { useHotkeys } from "react-hotkeys-hook"
+import { saveFile } from "@/db/action"
 
 type CodeEditorProps = {
   value: string
   onChange?: (value: string) => void
   height?: string
-  file?: file_type
+  file: file_type
   className?: string
-  publicFile? : boolean
+  publicFile?: boolean
 }
 
-export function CodeEditor({ value, onChange, file ,height = "300px", className,publicFile = false }: CodeEditorProps) {
-  const { theme: applicationTheme } = useTheme()
+export function CodeEditor({
+  value,
+  onChange,
+  file,
+  height = "300px",
+  className,
+  publicFile = false,
+}: CodeEditorProps) {
   const [mounted, setMounted] = useState(false)
-  const [code, setCode] = useState("")
+  const [code, setCode] = useState(value)
   const [output, setOutput] = useState("")
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [running , setRunning] = useState(false);
-  const [codeError , setCodeError] = useState(false);
+  const [running, setRunning] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [codeError, setCodeError] = useState(false)
 
-  const handleRunCode = async() => {
+  useHotkeys("ctrl+enter", async () => {
+    await handleRunCode()
+  })
+
+  useHotkeys("ctrl+s", async () => {
+    setSaving(true)
+    await saveFile(code, file.id)
+    setSaving(false)
+  })
+
+  const handleRunCode = async () => {
     try {
-      setRunning(true);
-      const res = await Code_Runner(code, file?.language ?? "");
-      setCodeError(res.ok === false);
-      setOutput(res.msg); 
-      setRunning(false);
+      setRunning(true)
+      const res = await Code_Runner(code, file?.language ?? "")
+      setCodeError(res.ok === false)
+      setOutput(res.msg)
+      setRunning(false)
     } catch (e) {
       setOutput(`Error: ${e}`)
     }
@@ -51,10 +69,6 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
 
   useEffect(() => {
     setMounted(true)
-    setCode(value);
-    // setInterval(()=>{
-    //   console.log("hi");
-    // },2000);
   }, [])
 
   if (!mounted) {
@@ -70,13 +84,23 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
     <div className="max-h-screen bg-background md:p-4">
       <div className="mx-auto max-w-4xl space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Code Editor</h1>
+          <Button
+            onClick={async () => {
+              setSaving(true)
+              await saveFile(code, file.id)
+              setSaving(false)
+            }}
+            disabled={saving}
+          >
+            <Save className="h-4 w-4" />
+            Save
+          </Button>
           <div className="flex gap-2">
             <Button onClick={handleRunCode} disabled={running}>
               <Play className="h-4 w-4" />
               Run
             </Button>
-            {!publicFile && <ShareButton file={file}/>}
+            {!publicFile && <ShareButton file={file} />}
           </div>
         </div>
 
@@ -96,10 +120,18 @@ export function CodeEditor({ value, onChange, file ,height = "300px", className,
             <div className="mx-auto w-full max-w-4xl">
               <DrawerHeader>
                 <DrawerTitle>Output</DrawerTitle>
-                <DrawerDescription>Result of your code execution</DrawerDescription>
+                <DrawerDescription>
+                  Result of your code execution
+                </DrawerDescription>
               </DrawerHeader>
               <div className="p-4">
-                <pre className={`rounded-lg bg-muted p-4 font-mono ${codeError ? "text-red-500" : "text-emerald-500"}`}>{output || "No output"}</pre>
+                <pre
+                  className={`rounded-lg bg-muted p-4 font-mono ${
+                    codeError ? "text-red-500" : "text-emerald-500"
+                  }`}
+                >
+                  {output || "No output"}
+                </pre>
               </div>
               <DrawerFooter>
                 <DrawerClose asChild>
