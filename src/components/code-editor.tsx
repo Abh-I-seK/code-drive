@@ -21,6 +21,7 @@ import ShareButton from "./Share-Button"
 import { file_type } from "@/db/schema"
 import { useHotkeys } from "react-hotkeys-hook"
 import { saveFile } from "@/db/action"
+import { IconSelector } from "@/app/file-row"
 
 type CodeEditorProps = {
   value: string
@@ -54,11 +55,13 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const [mounted, setMounted] = useState(false)
   const [code, setCode] = useState(value)
+  const [savedValue, setSavedValue] = useState(value)
   const [output, setOutput] = useState("")
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [running, setRunning] = useState(false)
   const [saving, setSaving] = useState(false)
   const [codeError, setCodeError] = useState(false)
+  const [saved,setSaved] = useState(true)
 
   useHotkeys("ctrl+enter", async () => {
     await handleRunCode()
@@ -66,6 +69,7 @@ export function CodeEditor({
 
   useHotkeys("ctrl+s", async () => {
     setSaving(true)
+    setSavedValue(code)
     await saveFile(code, file.id)
     setSaving(false)
   })
@@ -103,6 +107,7 @@ export function CodeEditor({
           <Button
             onClick={async () => {
               setSaving(true)
+              setSavedValue(code)
               await saveFile(code, file.id)
               setSaving(false)
             }}
@@ -111,10 +116,15 @@ export function CodeEditor({
             <Save className="h-4 w-4" />
             Save
           </Button>
+          <div className="flex gap-1 text-lg underline">
+            <IconSelector icon={file.language} />
+            {file.name}
+          </div>
           <div className="flex gap-2">
             <Button onClick={handleRunCode} disabled={running}>
               <Play className="h-4 w-4" />
               Run
+              {/* // add animate spin */}
             </Button>
             {!publicFile && <ShareButton file={file} />}
           </div>

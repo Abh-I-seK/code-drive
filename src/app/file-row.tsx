@@ -8,7 +8,7 @@ import JavaIcon from "../../public/Java";
 import JavascriptIcon from "../../public/Javascript";
 import CppIcon from "../../public/Cpp";
 
-function IconSelector(props: { icon: string }) {
+export function IconSelector(props: { icon: string }) {
   switch (props.icon) {
     case "python":
       return <PythonIcon />
