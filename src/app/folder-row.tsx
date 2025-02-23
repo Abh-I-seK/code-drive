@@ -3,6 +3,7 @@ import { folder_type } from "@/db/schema"
 import {
   Folder as FolderIcon,
 } from "lucide-react"
+import MoreOptions from "@/components/more-option"
 
 export function FolderRow(props: {
     f: folder_type  
@@ -20,7 +21,8 @@ export function FolderRow(props: {
           </Link>
         </div>
         <div className="col-span-3 text-muted-foreground">{"Folder"}</div>
-        <div className="col-span-3 text-muted-foreground">{"--"}</div>
+        <div className="col-span-2 text-muted-foreground">{"--"}</div>
+        <div className="col-span-1 text-muted-foreground"><MoreOptions f={props.f} folder={true} par={props.f.parent}/></div>
       </div>
     )
   }

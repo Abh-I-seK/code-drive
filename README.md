@@ -10,5 +10,6 @@
 - [x] figure out how to take value when creating a new file and all of those stuff
 - [x] add the way to add new folder and file from the current navigation menu
 - [x] figure out why the db call is so slow
+- [ ] separate the navbar component
 - [ ] Add the delete button for the files
 - [ ] Add analytics

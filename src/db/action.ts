@@ -1,6 +1,6 @@
 "use server"
 import { db } from "@/db/drizzle"
-import { file_Table } from "@/db/schema"
+import { file_Table, folder_Table } from "@/db/schema"
 import { validateAndAddExtension } from "@/lib/utils"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
@@ -88,4 +88,28 @@ export async function addFolderAction(
   // console.log(a);
   await addFolder(a)
   revalidatePath("/f/" + currentFolder)
+}
+
+function deleteAllFilesForParent(folderId: number) {
+  return db.delete(file_Table).where(eq(file_Table.parent, folderId))
+}
+
+function deleteAllFoldersForParent(folderId: number) {
+  return db.delete(folder_Table).where(eq(folder_Table.parent, folderId))
+}
+
+function deleteFolder(folderId: number) {
+  return db.delete(folder_Table).where(eq(folder_Table.id, folderId))
+}
+
+export async function deleteAction(id: number , folder : boolean , par:number){
+
+  if(folder){
+    await Promise.all([deleteAllFilesForParent(id),deleteAllFoldersForParent(id)])
+    await deleteFolder(id)
+  }else{
+    await db.delete(file_Table).where(eq(file_Table.id, id))
+  }
+
+  revalidatePath("/f/" + par)
 }
