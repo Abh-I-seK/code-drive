@@ -14,6 +14,7 @@ import {
 } from "@clerk/nextjs"
 import NewFolderButton from "@/components/new-folder"
 import NewFileButton from "@/components/new-file"
+import AddButton from "@/components/add-button"
 
 export default function GoogleDriveClone(props: {
   files: FileType[]
@@ -71,15 +72,17 @@ export default function GoogleDriveClone(props: {
             <div className="grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground items-center">
               <div className="col-span-6">Name</div>
               <div className="col-span-3">Type</div>
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <span className="flex justify-between items-center">
-                  <span>Size</span>
-                  <span>
-                    <NewFileButton currentFolder={props.currentFolder} user={props.user}/>
-                    {/* ------------------------------------------------------------------------------- */}
-                    <NewFolderButton currentFolder={props.currentFolder} user={props.user}/>
-                  </span>
+                  Size
                 </span>
+              </div>
+              <div className="col-span-1">
+                  <span>
+                    {/* <NewFileButton currentFolder={props.currentFolder} user={props.user}/>
+                    <NewFolderButton currentFolder={props.currentFolder} user={props.user}/> */}
+                    <AddButton currentFolder={props.currentFolder} user={props.user}/>
+                  </span>
               </div>
             </div>
           </div>

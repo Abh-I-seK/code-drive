@@ -34,10 +34,10 @@ export default function NewFileButton(props: {
     <Dialog>
       <DialogTrigger
         type="button"
-        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"
+        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground flex gap-2 items-center"
       >
         {/* <Button variant={"ghost"} className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"><FilePlus/></Button> */}
-        <FilePlus className="w-5" />
+        <FilePlus className="w-5" /> Add File
       </DialogTrigger>
       <DialogContent>
         <form

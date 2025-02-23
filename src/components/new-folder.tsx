@@ -19,9 +19,9 @@ export default function NewFolderButton(props:{currentFolder : number, user : st
     <Dialog>
       <DialogTrigger
         type="button"
-        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground"
+        className="px-2 py-0 mr-1 text-muted-foreground hover:text-foreground flex gap-2 items-center"
       >
-        <FolderPlus className="w-5" />
+        <FolderPlus className="w-5" /> Add Folder
       </DialogTrigger>
       <DialogContent>
         <form
