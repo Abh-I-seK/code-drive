@@ -61,7 +61,7 @@ export function CodeEditor({
   const [running, setRunning] = useState(false)
   const [saving, setSaving] = useState(false)
   const [codeError, setCodeError] = useState(false)
-  const [saved,setSaved] = useState(true)
+  const [hasChanges, setHasChanges] = useState(false)
 
   useHotkeys("ctrl+enter", async () => {
     await handleRunCode()
@@ -91,6 +91,12 @@ export function CodeEditor({
     setMounted(true)
   }, [])
 
+  useEffect(() => {
+    const curVal = savedValue !== code
+    if(hasChanges !== curVal)
+    setHasChanges(curVal)
+  },[savedValue,code])
+
   if (!mounted) {
     return (
       <div
@@ -111,7 +117,7 @@ export function CodeEditor({
               await saveFile(code, file.id)
               setSaving(false)
             }}
-            disabled={saving}
+            // disabled={saving}
           >
             <Save className="h-4 w-4" />
             Save
@@ -119,6 +125,7 @@ export function CodeEditor({
           <div className="flex gap-1 text-lg underline">
             <IconSelector icon={file.language} />
             {file.name}
+            {hasChanges && <div className="w-3 h-3 rounded-full bg-blue-300 animate-pulse" />}
           </div>
           <div className="flex gap-2">
             <Button onClick={handleRunCode} disabled={running}>
