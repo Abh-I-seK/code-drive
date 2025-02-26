@@ -100,14 +100,13 @@ export function CodeEditor({
   if (!mounted) {
     return (
       <div
-        style={{ height }}
-        className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+        className="rounded-md h-500 w-500 border border-input px-3 py-2 text-sm bg-slate-500 backdrop-blur-xl animate-ping"
       />
     )
   }
 
   return (
-    <div className="max-h-screen bg-background md:p-4">
+    <div className="max-h-screen md:p-4">
       <div className="mx-auto max-w-4xl space-y-4">
         <div className="flex items-center justify-between">
           {!publicFile && <Button
@@ -144,7 +143,7 @@ export function CodeEditor({
             theme={"dark"}
             extensions={[getLang(file.language)]}
             onChange={(value) => setCode(value)}
-            className="overflow-hidden rounded-lg text-lg"
+            className="overflow-hidden rounded-lg text-sm"
           />
         </div>
 

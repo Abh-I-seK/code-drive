@@ -24,7 +24,12 @@ export default function GoogleDriveClone(props: {
   const breadcrumbs = props.parents ?? []
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-8">
+    <div className="min-h-screen text-foreground p-8 mx-auto">
+      {/* Background gradients */}
+      <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-purple-300/30 to-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-emerald-500/20 to-yellow-500/10 rounded-full blur-3xl" />
+      </div>
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
@@ -77,8 +82,6 @@ export default function GoogleDriveClone(props: {
               </div>
               <div className="col-span-1">
                   <span>
-                    {/* <NewFileButton currentFolder={props.currentFolder} user={props.user}/>
-                    <NewFolderButton currentFolder={props.currentFolder} user={props.user}/> */}
                     <AddButton currentFolder={props.currentFolder} user={props.user}/>
                   </span>
               </div>

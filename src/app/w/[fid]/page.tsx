@@ -60,7 +60,12 @@ export default async function (props: { params: Promise<{ fid: string }> }) {
 
     const file = f[0]
     return (
-    <div className="min-h-screen bg-background text-foreground p-4">
+    <div className="min-h-screen text-foreground p-4">
+      {/* Background gradients */}
+      <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-purple-300/30 to-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-emerald-500/20 to-yellow-500/10 rounded-full blur-3xl" />
+      </div>
       <CodeEditor value={file.code} file={file} height="500px" />
     </div>
   )

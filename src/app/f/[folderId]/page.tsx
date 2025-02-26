@@ -3,6 +3,7 @@ import GoogleDriveClone from "../../Drive-ui"
 import { getFiles, getFolders,getParentFolder } from "@/db/queries"
 import { Suspense } from "react";
 import { cache } from "react";
+import Link from "next/link";
 
 const authCached = cache(async()=>{
   return await auth();
@@ -45,7 +46,7 @@ export default async function (props: {
 
   const user = await authCached();
   if(!user.userId){
-    return <div>Not logged in</div>
+    return <div className="p-50 flex justify-center">Not logged in Go {" "} <Link href={"/"} className="text-blue-700 underline">Here !!</Link></div>
   }
 
   const { folderId } = await props.params
