@@ -12,8 +12,6 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs"
-import NewFolderButton from "@/components/new-folder"
-import NewFileButton from "@/components/new-file"
 import AddButton from "@/components/add-button"
 
 export default function GoogleDriveClone(props: {

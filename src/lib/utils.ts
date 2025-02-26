@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function validateAndAddExtension(filename : string, language : string) {
-  const filenameRegex = /^[a-zA-Z0-9_]+$/;
+  const filenameRegex = /^[A-Za-z_][A-Za-z0-9_]*\.(java|cpp|cc|cxx|h|hpp|hxx|py|js|jsx|mjs|cjs)$/;
 
   if (!filenameRegex.test(filename)) {
     throw new Error("Invalid filename. Only alphanumeric characters and underscores are allowed.");

@@ -110,7 +110,7 @@ export function CodeEditor({
     <div className="max-h-screen bg-background md:p-4">
       <div className="mx-auto max-w-4xl space-y-4">
         <div className="flex items-center justify-between">
-          <Button
+          {!publicFile && <Button
             onClick={async () => {
               setSaving(true)
               setSavedValue(code)
@@ -121,7 +121,7 @@ export function CodeEditor({
           >
             <Save className="h-4 w-4" />
             Save
-          </Button>
+          </Button>}
           <div className="flex gap-1 text-lg underline">
             <IconSelector icon={file.language} />
             {file.name}

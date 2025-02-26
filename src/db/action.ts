@@ -113,3 +113,33 @@ export async function deleteAction(id: number , folder : boolean , par:number){
 
   revalidatePath("/f/" + par)
 }
+
+const getExtension = (filename:string) => {
+  const parts = filename.split('.');
+  if (parts.length <= 1 || (parts.length === 2 && parts[0] === '')) {
+    return '';
+  }
+  return parts[parts.length - 1].toLowerCase();
+};
+
+export async function updateFileName(id: number, newName: string ,par:number,oldName:string) {
+  if(getExtension(newName) !== getExtension(oldName)){
+    return 3;
+  }
+
+  const filenameRegex = /^[A-Za-z_][A-Za-z0-9_]*\.(java|cpp|cc|cxx|h|hpp|hxx|py|js|jsx|mjs|cjs)$/;
+
+  if (!filenameRegex.test(newName)) {
+    // throw new Error("Enter a valid filename.");
+    return 2;
+  }
+
+  await db
+    .update(file_Table)
+    .set({ name: newName })
+    .where(eq(file_Table.id, id))
+  
+  revalidatePath("/f/" + par);
+  return 1;
+    
+}
