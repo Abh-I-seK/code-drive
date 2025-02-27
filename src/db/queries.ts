@@ -67,13 +67,14 @@ export async function Code_Runner(code : string , language : string) {
   }
   const rapidAPI = options(langId , src_code);
   const response = await axios.request(rapidAPI);
-  if(!response.data.stdout){
-    const ok = response.data.status.description;
-    const errMsg = atob(response.data.stderr);
-    const msg = ok + "\n" + errMsg + "\n" + atob(response.data.message);
-    return {ok : false , msg};
+  console.log(response)
+  if(response.status !== 200){
+    const ok = response.data.status.description ?? "";
+    const errMsg = response.data.stderr ? atob(response.data.stderr) : "";
+    const msg = ok + "\n" + errMsg + "\n" + (response.data.message ? atob(response.data.message) : "");
+    return {ok : false , msg}; 
   }
-  const output : string = atob(response.data.stdout);
+  const output : string = response.data.stdout ? atob(response.data.stdout) : "";
   return {ok : true , msg:output}; 
 }
 
