@@ -100,7 +100,7 @@ export function CodeEditor({
   if (!mounted) {
     return (
       <div
-        className="rounded-md h-500 w-500 border border-input px-3 py-2 text-sm bg-slate-500 backdrop-blur-xl animate-ping"
+        className="mx-auto my-auto rounded-md h-[500px] w-1/2 border border-input px-3 py-2 text-sm bg-slate-700 backdrop-blur-2xl animate-pulse"
       />
     )
   }
