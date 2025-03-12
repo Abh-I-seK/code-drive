@@ -67,8 +67,8 @@ export async function Code_Runner(code : string , language : string) {
   }
   const rapidAPI = options(langId , src_code);
   const response = await axios.request(rapidAPI);
-  console.log(response)
-  if(response.status !== 200){
+  // console.log(response)
+  if(response.data.stderr){
     const ok = response.data.status.description ?? "";
     const errMsg = response.data.stderr ? atob(response.data.stderr) : "";
     const msg = ok + "\n" + errMsg + "\n" + (response.data.message ? atob(response.data.message) : "");
