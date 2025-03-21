@@ -4,6 +4,7 @@ import { getFiles, getFolders,getParentFolder } from "@/db/queries"
 import { Suspense } from "react";
 import { cache } from "react";
 import Link from "next/link";
+import FolderSkeleton from "@/components/Folder-Skeleton";
 
 const authCached = cache(async()=>{
   return await auth();
@@ -59,7 +60,7 @@ export default async function (props: {
   const [files, folders , parents] = await Promise.all([getFiles(parsedFolderId,user.userId), getFolders(parsedFolderId,user.userId), getParentFolderCached(parsedFolderId,user.userId)]);
   
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<FolderSkeleton/>}>
       <GoogleDriveClone files={files} folders={folders} parents={parents} user={user.userId} currentFolder={parsedFolderId}/>
     </Suspense>
   )
