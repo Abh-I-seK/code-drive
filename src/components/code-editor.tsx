@@ -68,6 +68,9 @@ export function CodeEditor({
   })
 
   useHotkeys("ctrl+s", async () => {
+    if(publicFile){
+      return;
+    }
     setSaving(true)
     setSavedValue(code)
     await saveFile(code, file.id)
