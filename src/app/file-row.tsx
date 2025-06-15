@@ -40,7 +40,7 @@ export function FileRow(props: { f: file_type }) {
           </Link>
         </div>
         <div className="col-span-3 text-muted-foreground">{"File"}</div>
-        <div className="col-span-2 text-muted-foreground">{"2 MB"}</div>
+        <div className="col-span-2 text-muted-foreground">{file.size}</div>
         <div className="col-span-1 text-muted-foreground"><MoreOptions f={props.f} folder={false} par={props.f.parent}/></div>
       </div>
     )

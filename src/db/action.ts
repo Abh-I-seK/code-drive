@@ -5,6 +5,7 @@ import { validateAndAddExtension } from "@/lib/utils"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { addFile, addFolder } from "./queries"
+import {filesize} from "filesize"
 
 export async function updateVisibility(isPublic: boolean, fileId: number) {
   await db
@@ -14,9 +15,11 @@ export async function updateVisibility(isPublic: boolean, fileId: number) {
 }
 
 export async function saveFile(code: string, fileId: number) {
+  const bytes = Buffer.from(code).length;
+  const newSize = filesize(bytes,{standard: "jedec"})
   await db
     .update(file_Table)
-    .set({ code: code })
+    .set({ code: code , size : newSize})
     .where(eq(file_Table.id, fileId))
 }
 
@@ -60,7 +63,7 @@ export async function addFileAction(
     parent: currentFolder,
     code: "",
     ownerId: user,
-    size: "2 MB",
+    size: "1 B",
   }
   // console.log(a);
   await addFile(a)
